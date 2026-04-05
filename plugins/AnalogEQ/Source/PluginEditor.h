@@ -5,8 +5,8 @@
 #include "PluginProcessor.h"
 #include "UI/FrequencyResponseCurve.h"
 #include "UI/FilterControlPanel.h"
-#include "UI/DBMeter.h"
-#include "UI/ModernLookAndFeel.h"
+#include <ai_ui/DBMeter.h>
+#include <ai_ui/ModernLookAndFeel.h>
 
 //==============================================================================
 /**

@@ -1,4 +1,4 @@
-#include "ModernLookAndFeel.h"
+#include <ai_ui/ModernLookAndFeel.h>
 
 // Color scheme moderno
 const juce::Colour ModernLookAndFeel::ColorScheme::background = juce::Colour(0xff1a1a1f);

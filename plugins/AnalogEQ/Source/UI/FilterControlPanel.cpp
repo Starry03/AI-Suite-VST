@@ -1,5 +1,5 @@
 #include "FilterControlPanel.h"
-#include "ModernLookAndFeel.h"
+#include <ai_ui/ModernLookAndFeel.h>
 #include "../Utils/ParameterHelper.h"
 
 FilterControlPanel::FilterControlPanel(juce::AudioProcessorValueTreeState& apvts)

@@ -1,6 +1,6 @@
 #include "FrequencyResponseCurve.h"
-#include "ModernLookAndFeel.h"
-#include "ParameterTooltip.h"
+#include <ai_ui/ModernLookAndFeel.h>
+#include <ai_ui/ParameterTooltip.h>
 
 FrequencyResponseCurve::FrequencyResponseCurve(FilterChain& fc, juce::AudioProcessorValueTreeState& apvts,
                                                AudioPluginAudioProcessor& processor)

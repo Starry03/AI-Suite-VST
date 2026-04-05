@@ -1,5 +1,5 @@
 #include "FilterNode.h"
-#include "ModernLookAndFeel.h"
+#include <ai_ui/ModernLookAndFeel.h>
 
 FilterNode::FilterNode(FilterBase* filter, int filterIndex)
     : filterPtr(filter), index(filterIndex)

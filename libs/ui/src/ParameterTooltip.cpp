@@ -1,5 +1,5 @@
-#include "ParameterTooltip.h"
-#include "ModernLookAndFeel.h"
+#include <ai_ui/ParameterTooltip.h>
+#include <ai_ui/ModernLookAndFeel.h>
 
 ParameterTooltip::ParameterTooltip()
 {
@@ -34,14 +34,14 @@ void ParameterTooltip::paint(juce::Graphics& g)
     auto textBounds = bounds.reduced(12, 8);
     
     // Filter type (header)
-    g.setFont(juce::Font(14.0f, juce::Font::bold));
+    g.setFont(juce::FontOptions(14.0f, juce::Font::bold));
     g.drawText(filterTypeName, textBounds.removeFromTop(20), juce::Justification::centred);
     
     textBounds.removeFromTop(4); // Spacing
     
     // Parameters
-    g.setFont(juce::Font(11.0f));
-    
+    g.setFont(juce::FontOptions(11.0f));
+
     // Frequency
     juce::String freqText = currentFreq >= 1000.0f 
         ? juce::String(currentFreq / 1000.0f, 2) + " kHz"
