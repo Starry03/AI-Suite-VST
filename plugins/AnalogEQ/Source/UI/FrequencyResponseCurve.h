@@ -48,7 +48,8 @@ private:
     
     std::unique_ptr<ParameterTooltip> tooltip;
     std::unique_ptr<SpectrumAnalyzer> spectrumAnalyzer;
-    
+    std::unique_ptr<SpectrumAnalyzer> sidechainSpectrumAnalyzer;
+
     // Filter interaction state
     int selectedFilterIndex = -1;
     int hoveredFilterIndex = -1;
@@ -72,8 +73,10 @@ private:
     
     // Performance optimization
     juce::Path cachedSpectrumPath;
+    juce::Path cachedSidechainSpectrumPath;
     std::vector<float> cachedResponse;
     bool spectrumNeedsUpdate = true;
+    bool sidechainSpectrumNeedsUpdate = true;
     bool responseNeedsUpdate = true;
     int frameSkipCounter = 0;
     
@@ -90,7 +93,8 @@ private:
     void drawFrequencyLabels(juce::Graphics& g);
     void drawFilterNodes(juce::Graphics& g);
     void drawSpectrum(juce::Graphics& g); // New: draw spectrum analyzer
-    
+    void drawSidechainSpectrum(juce::Graphics& g);
+
     // Filter interaction
     int findFilterNearMouse(juce::Point<float> mousePos);
     void addFilterAtMouse(juce::Point<float> mousePos);

@@ -49,6 +49,62 @@ FilterControlPanel::FilterControlPanel(juce::AudioProcessorValueTreeState& apvts
     panLabel.setFont(juce::FontOptions(11.0f, juce::Font::bold));
     addAndMakeVisible(panLabel);
 
+    // Dynamic threshold
+    dynThresholdKnob = std::make_unique<juce::Slider>();
+    dynThresholdKnob->setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+    dynThresholdKnob->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 20);
+    addAndMakeVisible(dynThresholdKnob.get());
+
+    dynThresholdLabel.setText("THR", juce::dontSendNotification);
+    dynThresholdLabel.setJustificationType(juce::Justification::centred);
+    dynThresholdLabel.setFont(juce::FontOptions(11.0f, juce::Font::bold));
+    addAndMakeVisible(dynThresholdLabel);
+
+    // Dynamic gain amount
+    dynGainKnob = std::make_unique<juce::Slider>();
+    dynGainKnob->setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+    dynGainKnob->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 20);
+    addAndMakeVisible(dynGainKnob.get());
+
+    dynGainLabel.setText("DYN", juce::dontSendNotification);
+    dynGainLabel.setJustificationType(juce::Justification::centred);
+    dynGainLabel.setFont(juce::FontOptions(11.0f, juce::Font::bold));
+    addAndMakeVisible(dynGainLabel);
+
+    // Dynamic attack
+    dynAttackKnob = std::make_unique<juce::Slider>();
+    dynAttackKnob->setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+    dynAttackKnob->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 20);
+    addAndMakeVisible(dynAttackKnob.get());
+
+    dynAttackLabel.setText("ATK", juce::dontSendNotification);
+    dynAttackLabel.setJustificationType(juce::Justification::centred);
+    dynAttackLabel.setFont(juce::FontOptions(11.0f, juce::Font::bold));
+    addAndMakeVisible(dynAttackLabel);
+
+    // Dynamic release
+    dynReleaseKnob = std::make_unique<juce::Slider>();
+    dynReleaseKnob->setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+    dynReleaseKnob->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 20);
+    addAndMakeVisible(dynReleaseKnob.get());
+
+    dynReleaseLabel.setText("REL", juce::dontSendNotification);
+    dynReleaseLabel.setJustificationType(juce::Justification::centred);
+    dynReleaseLabel.setFont(juce::FontOptions(11.0f, juce::Font::bold));
+    addAndMakeVisible(dynReleaseLabel);
+
+    // Dynamic mode selector
+    dynModeSelector = std::make_unique<juce::ComboBox>();
+    dynModeSelector->addItem("Auto", 1);
+    dynModeSelector->addItem("Cut", 2);
+    dynModeSelector->addItem("Boost", 3);
+    addAndMakeVisible(dynModeSelector.get());
+
+    dynModeLabel.setText("MODE", juce::dontSendNotification);
+    dynModeLabel.setJustificationType(juce::Justification::centred);
+    dynModeLabel.setFont(juce::FontOptions(11.0f, juce::Font::bold));
+    addAndMakeVisible(dynModeLabel);
+
     // Slope selector
     slopeSelector = std::make_unique<juce::ComboBox>();
     slopeSelector->addItem("6 dB", 1);
@@ -124,6 +180,11 @@ FilterControlPanel::FilterControlPanel(juce::AudioProcessorValueTreeState& apvts
     gainKnob->setVisible(false);
     qKnob->setVisible(false);
     panKnob->setVisible(false);
+    dynThresholdKnob->setVisible(false);
+    dynGainKnob->setVisible(false);
+    dynAttackKnob->setVisible(false);
+    dynReleaseKnob->setVisible(false);
+    dynModeSelector->setVisible(false);
     slopeSelector->setVisible(false);
     typeSelector->setVisible(false);
     removeButton->setVisible(false);
@@ -132,6 +193,11 @@ FilterControlPanel::FilterControlPanel(juce::AudioProcessorValueTreeState& apvts
     gainLabel.setVisible(false);
     qLabel.setVisible(false);
     panLabel.setVisible(false);
+    dynThresholdLabel.setVisible(false);
+    dynGainLabel.setVisible(false);
+    dynAttackLabel.setVisible(false);
+    dynReleaseLabel.setVisible(false);
+    dynModeLabel.setVisible(false);
     slopeLabel.setVisible(false);
     typeLabel.setVisible(false);
 }
@@ -163,7 +229,7 @@ void FilterControlPanel::resized()
         return;
     }
 
-    // Layout: [TYPE] [SLOPE] [FREQ] [Q] ... [GAIN centered] ... [PAN] [R] [X]
+    // Layout: [TYPE] [SLOPE] [FREQ] [Q] [THR] [DYN] [ATK] [REL] [MODE] ... [GAIN] ... [PAN] [R] [X]
 
     // Far right: [R] [X] buttons
     auto rightBtns = bounds.removeFromRight(65);
@@ -211,6 +277,42 @@ void FilterControlPanel::resized()
 
     bounds.removeFromLeft(5);
 
+    // Dynamic threshold knob
+    auto dynThrArea = bounds.removeFromLeft(70);
+    dynThresholdLabel.setBounds(dynThrArea.removeFromTop(15));
+    dynThresholdKnob->setBounds(dynThrArea.reduced(5));
+
+    bounds.removeFromLeft(5);
+
+    // Dynamic gain knob
+    auto dynGainArea = bounds.removeFromLeft(70);
+    dynGainLabel.setBounds(dynGainArea.removeFromTop(15));
+    dynGainKnob->setBounds(dynGainArea.reduced(5));
+
+    bounds.removeFromLeft(5);
+
+    // Dynamic attack knob
+    auto dynAttackArea = bounds.removeFromLeft(70);
+    dynAttackLabel.setBounds(dynAttackArea.removeFromTop(15));
+    dynAttackKnob->setBounds(dynAttackArea.reduced(5));
+
+    bounds.removeFromLeft(5);
+
+    // Dynamic release knob
+    auto dynReleaseArea = bounds.removeFromLeft(70);
+    dynReleaseLabel.setBounds(dynReleaseArea.removeFromTop(15));
+    dynReleaseKnob->setBounds(dynReleaseArea.reduced(5));
+
+    bounds.removeFromLeft(5);
+
+    // Dynamic mode selector
+    auto dynModeArea = bounds.removeFromLeft(78);
+    dynModeLabel.setBounds(dynModeArea.removeFromTop(15));
+    dynModeArea.removeFromTop(15);
+    dynModeSelector->setBounds(dynModeArea.removeFromTop(28));
+
+    bounds.removeFromLeft(5);
+
     // GAIN knob (centered in remaining space)
     auto gainArea = bounds;
     int maxGainW = 130;
@@ -233,6 +335,11 @@ void FilterControlPanel::setSelectedFilter(int filterIndex)
     gainKnob->setVisible(hasSelection);
     qKnob->setVisible(hasSelection);
     panKnob->setVisible(hasSelection);
+    dynThresholdKnob->setVisible(hasSelection);
+    dynGainKnob->setVisible(hasSelection);
+    dynAttackKnob->setVisible(hasSelection);
+    dynReleaseKnob->setVisible(hasSelection);
+    dynModeSelector->setVisible(hasSelection);
     slopeSelector->setVisible(hasSelection);
     typeSelector->setVisible(hasSelection);
     removeButton->setVisible(hasSelection);
@@ -241,6 +348,11 @@ void FilterControlPanel::setSelectedFilter(int filterIndex)
     gainLabel.setVisible(hasSelection);
     qLabel.setVisible(hasSelection);
     panLabel.setVisible(hasSelection);
+    dynThresholdLabel.setVisible(hasSelection);
+    dynGainLabel.setVisible(hasSelection);
+    dynAttackLabel.setVisible(hasSelection);
+    dynReleaseLabel.setVisible(hasSelection);
+    dynModeLabel.setVisible(hasSelection);
     slopeLabel.setVisible(hasSelection);
     typeLabel.setVisible(hasSelection);
     noSelectionLabel.setVisible(!hasSelection);
@@ -264,6 +376,11 @@ void FilterControlPanel::recreateAttachments()
     gainAttachment.reset();
     qAttachment.reset();
     panAttachment.reset();
+    dynThresholdAttachment.reset();
+    dynGainAttachment.reset();
+    dynAttackAttachment.reset();
+    dynReleaseAttachment.reset();
+    dynModeAttachment.reset();
 
     juce::String prefix = "filter" + juce::String(selectedFilterIndex) + "_";
 
@@ -278,6 +395,21 @@ void FilterControlPanel::recreateAttachments()
 
     panAttachment = std::make_unique<SliderAttachment>(
         apvtsRef, prefix + "pan", *panKnob);
+
+    dynThresholdAttachment = std::make_unique<SliderAttachment>(
+        apvtsRef, prefix + "dyn_threshold", *dynThresholdKnob);
+
+    dynGainAttachment = std::make_unique<SliderAttachment>(
+        apvtsRef, prefix + "dyn_gain", *dynGainKnob);
+
+    dynAttackAttachment = std::make_unique<SliderAttachment>(
+        apvtsRef, prefix + "dyn_attack_ms", *dynAttackKnob);
+
+    dynReleaseAttachment = std::make_unique<SliderAttachment>(
+        apvtsRef, prefix + "dyn_release_ms", *dynReleaseKnob);
+
+    dynModeAttachment = std::make_unique<ComboAttachment>(
+        apvtsRef, prefix + "dyn_mode", *dynModeSelector);
 
     slopeAttachment = std::make_unique<ComboAttachment>(
         apvtsRef, prefix + "slope", *slopeSelector);

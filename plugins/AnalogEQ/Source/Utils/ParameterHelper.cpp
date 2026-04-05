@@ -71,6 +71,59 @@ namespace ParameterHelper
             "Filter " + juce::String(filterIndex + 1) + " Slope",
             juce::StringArray{"6 dB/oct", "12 dB/oct", "24 dB/oct", "48 dB/oct", "96 dB/oct"},
             1));  // Default: 12 dB/oct
+
+        // Parametro: Dynamic Threshold
+        layout.add(std::make_unique<juce::AudioParameterFloat>(
+            prefix + "dyn_threshold",
+            "Filter " + juce::String(filterIndex + 1) + " Dynamic Threshold",
+            juce::NormalisableRange<float>(-60.0f, 0.0f, 0.1f),
+            -24.0f,
+            juce::String(),
+            juce::AudioProcessorParameter::genericParameter,
+            [](float value, int) { return juce::String(value, 1) + " dB"; }));
+
+        // Parametro: Dynamic Gain Amount (0 = off)
+        layout.add(std::make_unique<juce::AudioParameterFloat>(
+            prefix + "dyn_gain",
+            "Filter " + juce::String(filterIndex + 1) + " Dynamic Gain",
+            juce::NormalisableRange<float>(0.0f, 24.0f, 0.1f),
+            0.0f,
+            juce::String(),
+            juce::AudioProcessorParameter::genericParameter,
+            [](float value, int) { return juce::String(value, 1) + " dB"; }));
+
+        layout.add(std::make_unique<juce::AudioParameterChoice>(
+            prefix + "dyn_mode",
+            "Filter " + juce::String(filterIndex + 1) + " Dynamic Mode",
+            juce::StringArray{"Auto", "Cut", "Boost"},
+            0));
+
+        layout.add(std::make_unique<juce::AudioParameterFloat>(
+            prefix + "dyn_attack_ms",
+            "Filter " + juce::String(filterIndex + 1) + " Dynamic Attack",
+            juce::NormalisableRange<float>(1.0f, 250.0f, 0.1f),
+            20.0f,
+            juce::String(),
+            juce::AudioProcessorParameter::genericParameter,
+            [](float value, int) { return juce::String(value, 1) + " ms"; }));
+
+        layout.add(std::make_unique<juce::AudioParameterFloat>(
+            prefix + "dyn_release_ms",
+            "Filter " + juce::String(filterIndex + 1) + " Dynamic Release",
+            juce::NormalisableRange<float>(10.0f, 1000.0f, 0.1f),
+            180.0f,
+            juce::String(),
+            juce::AudioProcessorParameter::genericParameter,
+            [](float value, int) { return juce::String(value, 1) + " ms"; }));
+
+        layout.add(std::make_unique<juce::AudioParameterFloat>(
+            prefix + "dyn_detector_q",
+            "Filter " + juce::String(filterIndex + 1) + " Detector Q",
+            juce::NormalisableRange<float>(0.3f, 8.0f, 0.01f),
+            1.0f,
+            juce::String(),
+            juce::AudioProcessorParameter::genericParameter,
+            [](float value, int) { return juce::String(value, 2); }));
     }
     
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout(int numFilters)
@@ -92,7 +145,26 @@ namespace ParameterHelper
             "auto_gain",
             "Auto Gain",
             false));
-        
+
+        // Global Sidechain Enable
+        layout.add(std::make_unique<juce::AudioParameterBool>(
+            "sidechain_enabled",
+            "Sidechain Enabled",
+            false));
+
+        // Global phase mode
+        layout.add(std::make_unique<juce::AudioParameterChoice>(
+            "phase_mode",
+            "Phase Mode",
+            juce::StringArray{"Minimum", "Natural", "Linear Phase"},
+            0));
+
+        layout.add(std::make_unique<juce::AudioParameterChoice>(
+            "linear_phase_quality",
+            "Linear Phase Quality",
+            juce::StringArray{"Low", "Mid", "High"},
+            1));
+
         // Crea parametri per ogni filtro
         for (int i = 0; i < numFilters; ++i)
         {

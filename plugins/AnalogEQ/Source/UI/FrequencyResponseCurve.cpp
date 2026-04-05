@@ -15,6 +15,7 @@ FrequencyResponseCurve::FrequencyResponseCurve(FilterChain& fc, juce::AudioProce
     
     // Crea spectrum analyzer
     spectrumAnalyzer = std::make_unique<SpectrumAnalyzer>();
+    sidechainSpectrumAnalyzer = std::make_unique<SpectrumAnalyzer>();
 }
 
 FrequencyResponseCurve::~FrequencyResponseCurve()
@@ -34,7 +35,8 @@ void FrequencyResponseCurve::paint(juce::Graphics& g)
     
     // Draw spectrum analyzer BEHIND the curve
     drawSpectrum(g);
-    
+    drawSidechainSpectrum(g);
+
     // Calculate and draw response curve
     auto response = calculateFrequencyResponse();
     drawResponseCurve(g, response);
@@ -55,7 +57,9 @@ void FrequencyResponseCurve::timerCallback()
     // Pull audio samples from FIFO and feed to spectrum analyzer
     auto& fifo = processorRef.getAudioFifo();
     auto* fifoBuffer = processorRef.getAudioFifoBuffer();
-    
+    auto& sidechainFifo = processorRef.getSidechainAudioFifo();
+    auto* sidechainFifoBuffer = processorRef.getSidechainAudioFifoBuffer();
+
     int numReady = fifo.getNumReady();
     if (numReady > 0)
     {
@@ -69,7 +73,22 @@ void FrequencyResponseCurve::timerCallback()
         
         fifo.finishedRead(size1 + size2);
     }
-    
+
+    const bool sidechainEnabled = processorRef.isSidechainEnabledForUI();
+    int sidechainNumReady = sidechainFifo.getNumReady();
+    if (sidechainEnabled && sidechainNumReady > 0)
+    {
+        int start1, size1, start2, size2;
+        sidechainFifo.prepareToRead(sidechainNumReady, start1, size1, start2, size2);
+
+        if (size1 > 0)
+            sidechainSpectrumAnalyzer->pushSamples(sidechainFifoBuffer + start1, size1);
+        if (size2 > 0)
+            sidechainSpectrumAnalyzer->pushSamples(sidechainFifoBuffer + start2, size2);
+
+        sidechainFifo.finishedRead(size1 + size2);
+    }
+
     // Repaint only when there's new spectrum data or when dragging
     bool shouldRepaint = false;
     
@@ -78,7 +97,13 @@ void FrequencyResponseCurve::timerCallback()
         spectrumNeedsUpdate = true;
         shouldRepaint = true;
     }
-    
+
+    if (sidechainSpectrumAnalyzer->hasNewData())
+    {
+        sidechainSpectrumNeedsUpdate = true;
+        shouldRepaint = true;
+    }
+
     // Always repaint when dragging for smooth interaction
     if (isDragging)
     {
@@ -640,6 +665,70 @@ void FrequencyResponseCurve::drawSpectrum(juce::Graphics& g)
         // Optional: add subtle outline
         g.setColour(juce::Colour(100, 150, 255).withAlpha(0.2f));
         g.strokePath(cachedSpectrumPath, juce::PathStrokeType(1.0f));
+    }
+}
+
+void FrequencyResponseCurve::drawSidechainSpectrum(juce::Graphics& g)
+{
+    if (!sidechainSpectrumAnalyzer)
+        return;
+
+    if (!processorRef.isSidechainEnabledForUI())
+    {
+        cachedSidechainSpectrumPath.clear();
+        return;
+    }
+
+    if (sidechainSpectrumNeedsUpdate && sidechainSpectrumAnalyzer->hasNewData())
+    {
+        auto bounds = getLocalBounds().toFloat();
+        auto width = bounds.getWidth();
+
+        cachedSidechainSpectrumPath.clear();
+        bool firstPoint = true;
+
+        for (int x = 0; x < width; x += 2)
+        {
+            float freq = xToFrequency(static_cast<float>(x));
+            float magnitude = sidechainSpectrumAnalyzer->getMagnitudeForFrequency(freq);
+            float y = gainToY(magnitude * 0.4f);
+
+            if (firstPoint)
+            {
+                cachedSidechainSpectrumPath.startNewSubPath(x, bounds.getBottom());
+                cachedSidechainSpectrumPath.lineTo(x, y);
+                firstPoint = false;
+            }
+            else
+            {
+                cachedSidechainSpectrumPath.lineTo(x, y);
+            }
+        }
+
+        cachedSidechainSpectrumPath.lineTo(width, bounds.getBottom());
+        cachedSidechainSpectrumPath.closeSubPath();
+
+        sidechainSpectrumAnalyzer->clearNewDataFlag();
+        sidechainSpectrumNeedsUpdate = false;
+    }
+
+    if (!cachedSidechainSpectrumPath.isEmpty())
+    {
+        auto bounds = getLocalBounds().toFloat();
+        auto width = bounds.getWidth();
+
+        juce::ColourGradient gradient(
+            juce::Colour(255, 140, 40).withAlpha(0.22f),
+            0, gainToY(0.0f),
+            juce::Colour(255, 80, 20).withAlpha(0.22f),
+            width, gainToY(0.0f),
+            false);
+
+        g.setGradientFill(gradient);
+        g.fillPath(cachedSidechainSpectrumPath);
+
+        g.setColour(juce::Colour(255, 180, 90).withAlpha(0.45f));
+        g.strokePath(cachedSidechainSpectrumPath, juce::PathStrokeType(1.0f));
     }
 }
 

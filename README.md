@@ -13,7 +13,7 @@ I studied computer science and I produce music, however, my knowledge about audi
 
 ## Build
 
-As there could be non programmers reading this, I will go straight to the point. There is not a "ready" version of this program yet. Usually you would have an installer (.exe, .dmg, .deb, etc) that you can download and install on your computer. However, this project is still in development and there is no installer available yet (or precompiled binaries).
+As there could be non programmers reading this, I will go straight to the point. There is not a "ready" version of this program yet. Usually you would have an installer (.exe, .dmg, .deb, etc.) that you can download and install on your computer. However, this project is still in development and there is no installer available yet (or precompiled binaries).
 
 ### Dependencies
 
@@ -22,7 +22,7 @@ As there could be non programmers reading this, I will go straight to the point.
 
 ### Steps
 
-Open a terminal (cmd, powershell, bash, etc) and run the following commands
+Open a terminal (cmd, PowerShell, bash, etc.) and run the following commands
 
 1. Clone the repository
 
@@ -51,7 +51,3 @@ You can build any plugin target from the root build directory.
 
 - [ ] phasing
 - [ ] stereo
-
-## AI-Suite project
-
-This repository is now prepared to host multiple plugin projects sharing a common UI library.

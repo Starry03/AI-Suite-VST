@@ -31,11 +31,24 @@ private:
     std::unique_ptr<FrequencyResponseCurve> frequencyResponseCurve;
     std::unique_ptr<FilterControlPanel> filterControlPanel;
     std::unique_ptr<DBMeter> dbMeter;
-    juce::ToggleButton autoGainToggle;
-    
-    // Auto-gain parameter attachment
+    juce::TextButton autoGainButton;
+    juce::ComboBox phaseModeCombo;
+    juce::ComboBox phaseQualityCombo;
+    juce::Label phaseModeLabel;
+    juce::Label phaseQualityLabel;
+    juce::Label globalSectionLabel;
+    juce::Label latencyLabel;
+    juce::TextButton sidechainSectionButton;
+    juce::TextButton sidechainEnableButton;
+    juce::Label sidechainSectionLabel;
+    bool isSidechainSectionExpanded = false;
+
+    // Global parameter attachments
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> autoGainAttachment;
-    
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> phaseModeAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> phaseQualityAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> sidechainEnabledAttachment;
+
     ModernLookAndFeel modernLookAndFeel;
     
     // Header label

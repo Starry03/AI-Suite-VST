@@ -1,4 +1,4 @@
-project(AnalogEQ VERSION 1.0.3 LANGUAGES C CXX)
+project(AnalogEQ VERSION 1.0.4 LANGUAGES C CXX)
 
 juce_add_plugin(AnalogEQ
     COMPANY_NAME "Starry"
@@ -7,7 +7,7 @@ juce_add_plugin(AnalogEQ
     FORMATS AU VST3 Standalone
     PRODUCT_NAME "Analog EQ"
 
-    VERSION 1.0.3
+    VERSION 1.0.4
     BUNDLE_ID com.starrydsp.analogeq
 
     DESCRIPTION "Modular Analog-Style Graphic Equalizer with Interactive UI"
