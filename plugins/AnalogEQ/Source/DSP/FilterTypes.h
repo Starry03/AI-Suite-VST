@@ -58,8 +58,7 @@ public:
                 section->process(channelContext);
         }
 
-        // Analog saturation (soft clipping)
-        applyAnalogSaturation(buffer);
+        // Analog saturation removed for a cleaner sound.
     }
 
     void prepare(double sampleRate, int samplesPerBlock) override
@@ -166,22 +165,10 @@ protected:
         targetFrequency = frequency;
     }
 
-    void applyAnalogSaturation(juce::AudioBuffer<float>& buffer)
+    void applyAnalogSaturation(juce::AudioBuffer<float>& /*buffer*/)
     {
-        // Soft clipping per simulare saturazione analogica
-        const float threshold = 0.8f;
-        const float makeup = 1.0f / threshold;
-
-        for (int ch = 0; ch < buffer.getNumChannels(); ++ch)
-        {
-            auto* data = buffer.getWritePointer(ch);
-            for (int i = 0; i < buffer.getNumSamples(); ++i)
-            {
-                float x = data[i] * makeup;
-                // Tanh saturation
-                data[i] = std::tanh(x) * threshold;
-            }
-        }
+        // Removed: Tanh saturation generates odd harmonics.
+        // We leave the EQ clean (like FabFilter Pro-Q).
     }
 };
 

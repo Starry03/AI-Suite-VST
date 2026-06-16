@@ -796,7 +796,7 @@ void AudioPluginAudioProcessor::processPhaseModel(juce::AudioBuffer<float>& wetB
 
             delayLine[static_cast<size_t>(writePos)] = wet[i];
 
-            wet[i] = delayedWet * 0.8f + dry[i] * 0.2f;
+            wet[i] = delayedWet;
 
             writePos = (writePos + 1) % maxNaturalPhaseDelaySamples;
         }
