@@ -1,10 +1,16 @@
 project(AnalogEQ VERSION 1.0.4 LANGUAGES C CXX)
 
+if(APPLE)
+    set(PLUGIN_FORMATS AU VST3 Standalone)
+else()
+    set(PLUGIN_FORMATS VST3 Standalone)
+endif()
+
 juce_add_plugin(AnalogEQ
     COMPANY_NAME "Starry"
     PLUGIN_MANUFACTURER_CODE Stry
     PLUGIN_CODE AneQ
-    FORMATS AU VST3 Standalone
+    FORMATS ${PLUGIN_FORMATS}
     PRODUCT_NAME "Analog EQ"
 
     VERSION 1.0.4
